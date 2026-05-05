@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>澳門旅遊深度導覽 - 精確標籤版</title>
+    <style>
+        :root { --macau-green: #00847b; --accent: #ffc107; --sight: #2196f3; --food: #ff5722; }
+        body { font-family: "PingFang TC", "Microsoft JhengHei", sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; background: #f0f2f5; }
+        
+        header { background: var(--macau-green); color: white; padding: 15px 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 100; }
+        h1 { margin: 0; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+
+        /* 左側地點清單 */
+        .sidebar { width: 400px; overflow-y: auto; background: white; border-right: 1px solid #ddd; padding: 10px 15px; }
+        .area-title { background: #f8f9fa; padding: 10px 15px; border-radius: 8px; font-weight: bold; margin: 20px 0 10px 0; color: #444; border-left: 5px solid var(--macau-green); font-size: 0.95rem; }
+        
+        .poi-card { 
+            padding: 15px; border: 1px solid #eee; border-radius: 12px; margin-bottom: 12px; 
+            cursor: pointer; transition: 0.3s ease; position: relative;
+        }
+        .poi-card:hover { border-color: var(--macau-green); background: #f9fdfc; transform: translateX(5px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .poi-card.active { border-color: var(--macau-green); background: #f0fcfb; border-left: 5px solid var(--macau-green); }
+        
+        .poi-card h3 { margin: 0 0 5px 0; font-size: 1.1rem; color: #111; }
+        .badge { font-size: 0.75rem; padding: 2px 8px; border-radius: 20px; color: white; margin-right: 6px; font-weight: normal; }
+        .tag-sight { background: var(--sight); }
+        .tag-food { background: var(--food); }
+
+        .info-desc { font-size: 0.88rem; color: #666; margin: 8px 0; line-height: 1.5; }
+        .addr-tag { font-size: 0.8rem; color: #999; display: block; }
+
+        /* 右側嵌入地圖區 */
+        .map-section { flex: 1; position: relative; background: #e5e3df; }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* 手機版適配 */
+        @media (max-width: 768px) {
+            .main-layout { flex-direction: column; }
+            .sidebar { width: 100%; height: 40%; }
+            .map-section { height: 60%; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🇲🇴 澳門深度導覽：精確點位標註</h1>
+</header>
+
+<div class="main-layout">
+    <div class="sidebar" id="sidebar">
+        <div class="area-title">📍 澳門半島 (歷史與老字號)</div>
+        
+        <div class="poi-card active" onclick="changeLoc('大三巴牌坊', this)">
+            <h3><span class="badge tag-sight">必去</span>大三巴牌坊</h3>
+            <p class="info-desc">最具代表性的世遺地標。點擊地圖標籤可查看實景與導航。</p>
+            <span class="addr-tag">📍 大三巴斜巷</span>
+        </div>
+
+        <div class="poi-card" onclick="changeLoc('南屏雅敘', this)">
+            <h3><span class="badge tag-food">老字號</span>南屏雅敘</h3>
+            <p class="info-desc">全澳最老茶餐廳。必點：叉燒蛋文治、沙翁、熱奶茶。</p>
+            <span class="addr-tag">📍 十月初五日街85-85A號</span>
+        </div>
+
+        <div class="poi-card" onclick="changeLoc('東望洋燈塔', this)">
+            <h3><span class="badge tag-sight">美拍</span>東望洋燈塔</h3>
+            <p class="info-desc">俯瞰澳門半島全景的最佳點，地圖已標註纜車入口附近。</p>
+            <span class="addr-tag">📍 澳門松山山頂</span>
+        </div>
+
+        <div class="area-title">📍 氹仔 & 金光大道</div>
+
+        <div class="poi-card" onclick="changeLoc('官也街', this)">
+            <h3><span class="badge tag-food">熱門</span>官也街</h3>
+            <p class="info-desc">美食與手信天堂。地圖將精確指向街道入口資訊。</p>
+            <span class="addr-tag">📍 氹仔官也街</span>
+        </div>
+
+        <div class="poi-card" onclick="changeLoc('澳門倫敦人', this)">
+    <h3><span class="badge tag-sight">必拍</span>澳門倫敦人大笨鐘</h3>
+    <p class="info-desc">1:1 原尺寸建造的伊莉莎白塔。建議在晚上 7:30 後前往，配合音樂燈光秀效果更佳。</p>
+    <span class="addr-tag">📍 路氹連貫公路</span>
+</div>
+
+        <div class="area-title">📍 路環</div>
+
+        <div class="poi-card" onclick="changeLoc('Lord Stow\'s Bakery 安德魯餅店總店', this)">
+            <h3><span class="badge tag-food">必吃</span>安德魯餅店 (總店)</h3>
+            <p class="info-desc">葡撻發源地，地圖標註點位於路環海邊創始店。</p>
+            <span class="addr-tag">📍 路環市中心屠場前地1號</span>
+        </div>
+    </div>
+
+    <div class="map-section">
+        <!-- 初始地圖：使用 Search 模式 -->
+        <iframe 
+            id="mapIframe"
+            src="https://www.google.com/maps?q=大三巴牌坊&output=embed" 
+            allowfullscreen="" 
+            loading="lazy">
+        </iframe>
+    </div>
+</div>
+
+<script>
+    function changeLoc(query, element) {
+        // 1. 優化地圖 URL：使用 Search 模式強迫彈出 Pin 和資訊框
+        // 加上 hl=zh-TW 確保介面為繁體中文
+        const newUrl = `https://www.google.com/maps?q=${encodeURIComponent(query)}&hl=zh-TW&output=embed`;
+        document.getElementById('mapIframe').src = newUrl;
+
+        // 2. 更新左側 UI 高亮狀態
+        const cards = document.querySelectorAll('.poi-card');
+        cards.forEach(card => card.classList.remove('active'));
+        element.classList.add('active');
+    }
+</script>
+
+</body>
+</html>
