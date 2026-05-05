@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛸 宇宙生物人格鑑定 👽</title>
+    <style>
+        :root {
+            --neon-pink: #FF007A;
+            --neon-blue: #00D4FF;
+            --neon-green: #39FF14;
+            --dark-space: #1A1A2E;
+            --star-white: #FFFFFF;
+        }
+
+        body {
+            font-family: 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+            background-color: var(--dark-space);
+            background-image: radial-gradient(white 1px, transparent 1px);
+            background-size: 50px 50px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--star-white);
+            overflow-x: hidden;
+        }
+
+        #app {
+            width: 90%;
+            max-width: 450px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 4px solid var(--neon-blue);
+            border-radius: 40px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 0 20px var(--neon-blue);
+        }
+
+        .hidden { display: none; }
+
+        .img-box {
+            font-size: 100px;
+            margin: 20px 0;
+            filter: drop-shadow(0 0 10px white);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        h1 { color: var(--neon-green); text-shadow: 2px 2px 0px #000; }
+
+        .btn {
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            padding: 18px;
+            margin: 10px 0;
+            width: 100%;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 5px 0 #b00054;
+        }
+
+        .btn:active { transform: translateY(4px); box-shadow: none; }
+
+        .progress {
+            background: #444;
+            height: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            overflow: hidden;
+        }
+
+        #bar { background: var(--neon-green); width: 0%; height: 100%; transition: 0.4s; }
+
+        .result-tag {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--neon-green);
+            letter-spacing: 8px;
+            margin: 20px 0;
+            text-shadow: 0 0 15px var(--neon-green);
+        }
+    </style>
+</head>
+<body>
+
+<div id="app">
+    <div id="start-page">
+        <div class="img-box">🚀</div>
+        <h1>宇宙生物鑑定局</h1>
+        <p>你不是地球人吧？<br>測測看你是哪種星際生物！</p>
+        <button class="btn" onclick="start()">接受掃描</button>
+    </div>
+
+    <div id="quiz-page" class="hidden">
+        <div class="progress"><div id="bar"></div></div>
+        <div id="q-img" class="img-box">🛸</div>
+        <h2 id="q-text">正在讀取大腦...</h2>
+        <div id="options"></div>
+    </div>
+
+    <div id="result-page" class="hidden">
+        <div id="r-img" class="img-box">✨</div>
+        <h2>鑑定結果：</h2>
+        <div class="result-tag" id="r-tag">GWCH</div>
+        <h3 id="r-name" style="color: var(--neon-blue);">星際領航員</h3>
+        <p id="r-desc">你是宇宙中最閃耀的存在！</p>
+        <button class="btn" onclick="location.reload()">重新降落地球</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { q: "降落到陌生星球，你第一件事是？", a: "大喊：我來啦！(G)", b: "躲在飛船觀察環境(S)", d: "GS" },
+        { q: "看到奇怪的發光植物，你會？", a: "直接吃吃看(W)", b: "拿出儀器精密分析(A)", d: "WA" },
+        { q: "外星隊友受傷了，你會？", a: "給他精神撫慰(H)", b: "計算生存概率並修復(C)", d: "HC" },
+        { q: "你的飛船房間通常？", a: "漂浮著各種雜物(F)", b: "物品按引力大小排列(V)", d: "FV" },
+        { q: "遇到星際戰爭，你偏向？", a: "衝進去大打一場(G)", b: "在後方制定策略(S)", d: "GS" },
+        { q: "關於黑洞，你的看法是？", a: "那是通往夢境的門(W)", b: "那是引力坍塌的點(A)", d: "WA" },
+        { q: "選擇通訊器時，你更看重？", a: "外觀設計好不好看(H)", b: "信號頻率是否穩定(C)", d: "HC" },
+        { q: "明天的星際航行計劃？", a: "看心情隨意飛(F)", b: "必須定好導航點(V)", d: "FV" }
+    ];
+
+    const results = {
+        "GWHF": { n: "極光獨角獸", d: "充滿熱情的夢想家，宇宙中沒有你不敢去的地方！", i: "🦄" },
+        "GWCV": { n: "超新星指揮官", d: "有膽識又有策略，你是帶領艦隊開疆闢土的戰神。", i: "👨‍✈️" },
+        "SAHF": { n: "月光隱士", d: "安靜而溫柔，在星空的角落編織細膩的夢網。", i: "🌙" },
+        "SACV": { n: "黑洞運算核心", d: "極其理性、冷靜，宇宙運行的邏輯都在你腦袋裡。", i: "💾" },
+        "GWCH": { n: "星際外交官", d: "能用理性的方式處理感性的問題，社交圈的中心點。", i: "🎙️" },
+        "SWHF": { n: "星塵藝術家", d: "直覺敏銳，你能看見別人看不見的宇宙色彩。", i: "🎨" },
+        "GACV": { n: "鋼鐵冒險家", d: "充滿動力但絕不盲目，你是追求極致效率的探險家。", i: "🤖" },
+        "SAHV": { n: "星球守護者", d: "內心細膩且守規矩，是大家最放心的避風港。", i: "🏠" }
+        // ...這裡可以根據 16 種組合繼續擴充名稱與描述
+    };
+
+    let idx = 0;
+    let score = { G:0, S:0, W:0, A:0, H:0, C:0, F:0, V:0 };
+
+    function start() {
+        document.getElementById('start-page').classList.add('hidden');
+        document.getElementById('quiz-page').classList.remove('hidden');
+        render();
+    }
+
+    function render() {
+        if(idx >= questions.length) return showResult();
+        const q = questions[idx];
+        document.getElementById('q-text').innerText = q.q;
+        document.getElementById('bar').style.width = (idx/questions.length)*100 + "%";
+        
+        const opt = document.getElementById('options');
+        opt.innerHTML = "";
+        [q.a, q.b].forEach((txt, i) => {
+            const b = document.createElement('button');
+            b.className = 'btn';
+            b.innerText = txt;
+            b.onclick = () => { 
+                score[q.d[i]]++; 
+                idx++; 
+                render(); 
+            };
+            opt.appendChild(b);
+        });
+    }
+
+    function showResult() {
+        document.getElementById('quiz-page').classList.add('hidden');
+        document.getElementById('result-page').classList.remove('hidden');
+        
+        const code = (score.G>=score.S?'G':'S') + (score.W>=score.A?'W':'A') + (score.H>=score.C?'H':'C') + (score.F>=score.V?'F':'V');
+        const r = results[code] || { n: "神祕星際種族", d: "你的基因太過獨特，我們還在解析中！", i: "👾" };
+        
+        document.getElementById('r-tag').innerText = code;
+        document.getElementById('r-name').innerText = r.n;
+        document.getElementById('r-desc').innerText = r.d;
+        document.getElementById('r-img').innerText = r.i;
+    }
+</script>
+
+</body>
+</html>
